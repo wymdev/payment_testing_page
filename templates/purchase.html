@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VirgoLearn Premium Checkout</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.45);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-glow: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            --accent-color: #a78bfa;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(160px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #6366f1, #4f46e5);
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #8b5cf6, #d946ef);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1.1fr 1.2fr;
+            gap: 40px;
+            z-index: 10;
+            position: relative;
+        }
+
+        @media (max-width: 868px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Product Panel */
+        .product-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.15), transparent);
+        }
+
+        .product-badge {
+            align-self: flex-start;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #c7d2fe;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .product-image-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 12px 0;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 30%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .product-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0 0 32px 0;
+        }
+
+        .pricing-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 24px;
+        }
+
+        .pricing-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .pricing-label {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .pricing-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .pricing-total {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Checkout Panel */
+        .checkout-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .checkout-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.3px;
+        }
+
+        .checkout-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 32px 0;
+        }
+
+        .form-section {
+            margin-bottom: 28px;
+        }
+
+        .section-header {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.25s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Provider Selector */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .provider-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+
+        .provider-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .provider-card.selected {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: #6366f1;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .provider-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #c7d2fe;
+            flex-shrink: 0;
+        }
+
+        .provider-card.selected .provider-icon {
+            background: #6366f1;
+            color: #ffffff;
+        }
+
+        .provider-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .provider-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .provider-method {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Card Billing Fields Container (Dynamic) */
+        .card-billing-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+
+        .card-billing-container.show {
+            max-height: 600px;
+        }
+
+        .billing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        /* Checkout Button */
+        .btn-pay {
+            width: 100%;
+            background: var(--primary-glow);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-pay:active {
+            transform: translateY(0);
+        }
+
+        .btn-pay:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Error/Status Banner */
+        .status-banner {
+            display: none;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* QR Code Modal styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .modal-card {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 440px;
+            padding: 36px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform: scale(0.95);
+            animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            display: inline-block;
+            margin: 24px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ffffff;
+        }
+
+        .polling-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+        }
+
+        /* Premium elements for QR/Waiting modals */
+        .qr-container-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 24px 0;
+        }
+
+        .qr-expired-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.92);
+            border-radius: 16px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            z-index: 10;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        .qr-expired-icon {
+            font-size: 44px;
+            color: var(--error-color);
+            margin-bottom: 12px;
+        }
+
+        .qr-expired-text {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 16px;
+            letter-spacing: -0.2px;
+        }
+
+        .timer-display {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 12px 0 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .timer-value {
+            color: #ffffff;
+            font-family: monospace;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-retry {
+            width: 100%;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+        }
+
+        .btn-retry:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <div class="container">
+        <!-- Product Details -->
+        <div class="product-panel">
+            <div>
+                <div class="product-badge">Premium Course</div>
+                <div class="product-image-container">
+                    <img src="/static/course_thumbnail.png" alt="Go Mastery" class="product-image">
+                </div>
+                <h1 class="product-title">Go Microservices & API Architecture</h1>
+                <p class="product-desc">
+                    Master the art of building scalable, concurrent, and highly resilient backend platforms in Go.
+                    Covers HTTP routers, gRPC, JWT authorization, MongoDB indexes, and secure payment integrations.
+                </p>
+            </div>
+
+            <div class="pricing-section">
+                <div class="pricing-row">
+                    <span class="pricing-label">Course Fee</span>
+                    <span class="pricing-value">500 MMK</span>
+                </div>
+                <div class="pricing-row">
+                    <span class="pricing-label">Taxes & Platform Fees</span>
+                    <span class="pricing-value">0 MMK</span>
+                </div>
+                <div class="pricing-row"
+                    style="margin-top: 16px; border-top: 1px dashed rgba(255,255,255,0.08); padding-top: 16px;">
+                    <span class="pricing-label" style="font-weight: 700; color: #ffffff;">Total Amount</span>
+                    <span class="pricing-total">500 MMK</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <div class="checkout-panel">
+            <h2 class="checkout-title">Secure Checkout</h2>
+            <p class="checkout-subtitle">Enter payment details to enroll instantly</p>
+
+            <div class="status-banner" id="errorBanner">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="errorMessage">Error text goes here</span>
+            </div>
+
+            <form id="checkoutForm" onsubmit="event.preventDefault();">
+                <!-- Section 1: Customer Details -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fa-solid fa-user"></i>
+                        <span>1. Customer Details</span>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="customerName">Full Name</label>
+                        <input class="input-field" type="text" id="customerName" placeholder="e.g. Min Thu Kyaw"
+                            required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="customerPhone">Mobile Number (Wallet Phone)</label>
+                        <input class="input-field" type="tel" id="customerPhone" placeholder="e.g. 09123456789"
+                            required>
+                    </div>
+                </div>
+
+                <!-- Section 2: Payment Provider -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <i class="fa-solid fa-credit-card"></i>
+                        <span>2. Payment Wallet / Card</span>
+                    </div>
+
+                    <div class="provider-grid">
+                        <!-- 10. KBZ Pay QR (Default Selected) -->
+                        <div class="provider-card selected" data-provider="KBZ Pay" data-method="QR">
+                            <div class="provider-icon"><i class="fa-solid fa-qrcode"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">KBZ Pay</span>
+                                <span class="provider-method">Scan QR</span>
+                            </div>
+                        </div>
+
+                        <!-- 11. KBZ Pay PWA -->
+                        <div class="provider-card" data-provider="KBZ Pay" data-method="PWA">
+                            <div class="provider-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">KBZ Pay</span>
+                                <span class="provider-method">PWA Redirect</span>
+                            </div>
+                        </div>
+
+                        <!-- 12. WAVE PAY PIN -->
+                        <div class="provider-card" data-provider="WAVE PAY" data-method="PIN">
+                            <div class="provider-icon"><i class="fa-solid fa-key"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">Wave Pay</span>
+                                <span class="provider-method">PIN Callback</span>
+                            </div>
+                        </div>
+
+                        <!-- 1. AYA Pay QR -->
+                        <div class="provider-card" data-provider="AYA Pay" data-method="QR">
+                            <div class="provider-icon"><i class="fa-solid fa-qrcode"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">AYA Pay</span>
+                                <span class="provider-method">Scan QR</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. AYA Pay PIN -->
+                        <div class="provider-card" data-provider="AYA Pay" data-method="PIN">
+                            <div class="provider-icon"><i class="fa-solid fa-key"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">AYA Pay</span>
+                                <span class="provider-method">PIN Callback</span>
+                            </div>
+                        </div>
+
+                        <!-- 8. CB Pay QR -->
+                        <div class="provider-card" data-provider="CB Pay" data-method="QR">
+                            <div class="provider-icon"><i class="fa-solid fa-qrcode"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">CB Pay</span>
+                                <span class="provider-method">Scan QR</span>
+                            </div>
+                        </div>
+
+                        <!-- 9. UAB Pay PIN -->
+                        <div class="provider-card" data-provider="UAB Pay" data-method="PIN">
+                            <div class="provider-icon"><i class="fa-solid fa-key"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">UAB Pay</span>
+                                <span class="provider-method">PIN Callback</span>
+                            </div>
+                        </div>
+
+                        <!-- 13. MAB Bank OTP -->
+                        <div class="provider-card" data-provider="MAB Bank" data-method="OTP">
+                            <div class="provider-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">MAB Bank</span>
+                                <span class="provider-method">OTP Redirect</span>
+                            </div>
+                        </div>
+
+                        <!-- 14. KBZ Direct Pay PWA -->
+                        <div class="provider-card" data-provider="KBZ Direct Pay" data-method="PWA">
+                            <div class="provider-icon"><i class="fa-solid fa-building-columns"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">KBZ Direct</span>
+                                <span class="provider-method">Direct PWA</span>
+                            </div>
+                        </div>
+
+                        <!-- 15. VisaMax OTP -->
+                        <div class="provider-card" data-provider="VisaMax" data-method="OTP">
+                            <div class="provider-icon"><i class="fa-brands fa-cc-visa"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">Visa</span>
+                                <span class="provider-method">VisaMax Card</span>
+                            </div>
+                        </div>
+
+                        <!-- 16. MasterMax OTP -->
+                        <div class="provider-card" data-provider="MasterMax" data-method="OTP">
+                            <div class="provider-icon"><i class="fa-brands fa-cc-mastercard"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">Mastercard</span>
+                                <span class="provider-method">MasterMax Card</span>
+                            </div>
+                        </div>
+
+                        <!-- 17. JCBMax OTP -->
+                        <div class="provider-card" data-provider="JCBMax" data-method="OTP">
+                            <div class="provider-icon"><i class="fa-solid fa-credit-card"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">JCB Card</span>
+                                <span class="provider-method">JCBMax Card</span>
+                            </div>
+                        </div>
+
+                        <!-- 18. MPU OTP -->
+                        <div class="provider-card" data-provider="MPU" data-method="OTP">
+                            <div class="provider-icon"><i class="fa-solid fa-credit-card"></i></div>
+                            <div class="provider-info">
+                                <span class="provider-name">MPU Card</span>
+                                <span class="provider-method">MPU Redirect</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Optional Card Billing Info -->
+                <div class="form-section card-billing-container" id="cardBillingContainer">
+                    <div class="section-header">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>3. Card Billing Address</span>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="cardEmail">Email Address</label>
+                        <input class="input-field" type="email" id="cardEmail" placeholder="customer@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="cardAddress">Street Address</label>
+                        <input class="input-field" type="text" id="cardAddress" placeholder="No. 123, Pyay Road">
+                    </div>
+                    <div class="billing-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="cardCity">City</label>
+                            <input class="input-field" type="text" id="cardCity" placeholder="Yangon">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="cardState">State / Region</label>
+                            <input class="input-field" type="text" id="cardState" placeholder="Yangon">
+                        </div>
+                    </div>
+                    <div class="billing-grid">
+                        <div class="input-group">
+                            <label class="input-label" for="cardCountry">Country Code</label>
+                            <input class="input-field" type="text" id="cardCountry" placeholder="MM" value="MM">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="cardPostal">Postal Code</label>
+                            <input class="input-field" type="text" id="cardPostal" placeholder="11181">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checkout Trigger -->
+                <button type="submit" class="btn-pay" id="btnPay">
+                    <div class="spinner" id="paySpinner"></div>
+                    <span id="btnText">Enroll and Pay 500 MMK</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- QR Code Popup Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeQRModal()"><i class="fa-solid fa-xmark"></i></span>
+            <h3 class="modal-header">Scan to Pay</h3>
+            <p class="modal-desc" id="qrModalDesc">Please open your wallet app and scan the QR code below to complete
+                the payment.</p>
+
+            <div class="qr-container-wrapper">
+                <div class="qr-container" id="qrContainer">
+                    <img src="" alt="Payment QR Code" class="qr-image" id="qrCodeImage">
+                </div>
+                <div id="qrExpiredOverlay" class="qr-expired-overlay">
+                    <i class="fa-regular fa-clock qr-expired-icon"></i>
+                    <span class="qr-expired-text">Session Expired</span>
+                </div>
+            </div>
+
+            <div class="timer-display" id="qrTimerDisplay">
+                <span>Time remaining:</span>
+                <span id="qrTimer" class="timer-value">01:30</span>
+            </div>
+
+            <div class="polling-indicator" id="qrPollingIndicator">
+                <div class="pulse-dot"></div>
+                <span>Waiting for payment confirmation...</span>
+            </div>
+
+            <button id="qrRetryBtn" class="btn-retry" style="display: none;" onclick="retryCheckout()">
+                <i class="fa-solid fa-arrows-rotate"></i> <span>Regenerate QR Code</span>
+            </button>
+
+            <!-- Local Dev Tip Alert -->
+            <div id="qrLocalDevTip"
+                style="display: none; margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); font-size: 11px; line-height: 1.4; color: #f59e0b; text-align: left;">
+                <i class="fa-solid fa-circle-info" style="margin-right: 4px;"></i>
+                <strong>Stuck on localhost?</strong> Dinger's webhook callback cannot reach your local server.
+                Go to the <a href="http://localhost:8080" target="_blank"
+                    style="color: #f59e0b; text-decoration: underline; font-weight: bold;">Admin Dashboard</a>, locate
+                this payment, and click <strong>Simulate Success</strong>.
+            </div>
+
+            <p class="modal-desc" id="qrModalFooter" style="font-size:12px; margin-top:20px;">
+                Do not close this popup. The screen will automatically redirect once your payment is successfully
+                validated.
+            </p>
+        </div>
+    </div>
+
+    <!-- Waiting for Wallet Notification Modal (PIN providers that don't redirect) -->
+    <div class="modal-overlay" id="waitingModal">
+        <div class="modal-card">
+            <span class="modal-close" onclick="closeWaitingModal()"><i class="fa-solid fa-xmark"></i></span>
+            <h3 class="modal-header">Payment Requested</h3>
+            <p class="modal-desc" id="waitingModalDesc">A payment notification has been sent to your wallet app. Please
+                open the app and approve the payment.</p>
+
+            <div style="margin: 32px 0;">
+                <div id="waitingIconContainer"
+                    style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.15)); border: 2px solid rgba(167,139,250,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i id="waitingBellIcon" class="fa-solid fa-bell"
+                        style="font-size: 32px; color: var(--accent-color); animation: pulse-dot 2s infinite;"></i>
+                </div>
+            </div>
+
+            <div class="timer-display" id="waitingTimerDisplay">
+                <span>Time remaining:</span>
+                <span id="waitingTimer" class="timer-value">01:30</span>
+            </div>
+
+            <div class="polling-indicator" id="waitingPollingIndicator">
+                <div class="pulse-dot"></div>
+                <span>Waiting for you to approve in your wallet app...</span>
+            </div>
+
+            <button id="waitingRetryBtn" class="btn-retry" style="display: none;" onclick="retryCheckout()">
+                <i class="fa-solid fa-arrows-rotate"></i> <span>Send Request Again</span>
+            </button>
+
+            <!-- Local Dev Tip Alert -->
+            <div id="waitingLocalDevTip"
+                style="display: none; margin-top: 15px; padding: 12px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); font-size: 11px; line-height: 1.4; color: #f59e0b; text-align: left;">
+                <i class="fa-solid fa-circle-info" style="margin-right: 4px;"></i>
+                <strong>Stuck on localhost?</strong> Dinger's webhook callback cannot reach your local server.
+                Go to the <a href="http://localhost:8080" target="_blank"
+                    style="color: #f59e0b; text-decoration: underline; font-weight: bold;">Admin Dashboard</a>, locate
+                this payment, and click <strong>Simulate Success</strong>.
+            </div>
+
+            <p class="modal-desc" id="waitingModalFooter" style="font-size:12px; margin-top:20px;">
+                Do not close this popup. The screen will automatically redirect once your payment is confirmed.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let selectedProvider = "KBZ Pay";
+        let selectedMethod = "QR";
+        let pollingInterval = null;
+        let countdownInterval = null;
+        let currentPaymentId = null;
+        const SESSION_TIMEOUT_SEC = 90; // 90 seconds timeout for scanning/approving payment
+
+        // Provider card selections
+        const cards = document.querySelectorAll('.provider-card');
+        const cardBillingContainer = document.getElementById('cardBillingContainer');
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                cards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+
+                selectedProvider = card.getAttribute('data-provider');
+                selectedMethod = card.getAttribute('data-method');
+
+                // If card (Visa / Master / JCB / VisaMax / MasterMax / JCBMax / MPU) is selected, show billing fields
+                const isCard = ["Visa", "Master", "JCB", "VisaMax", "MasterMax", "JCBMax", "MPU"].includes(selectedProvider);
+                if (isCard) {
+                    cardBillingContainer.classList.add('show');
+                    document.getElementById('cardEmail').required = true;
+                    document.getElementById('cardAddress').required = true;
+                    document.getElementById('cardCity').required = true;
+                    document.getElementById('cardState').required = true;
+                    document.getElementById('cardCountry').required = true;
+                    document.getElementById('cardPostal').required = true;
+                } else {
+                    cardBillingContainer.classList.remove('show');
+                    document.getElementById('cardEmail').required = false;
+                    document.getElementById('cardAddress').required = false;
+                    document.getElementById('cardCity').required = false;
+                    document.getElementById('cardState').required = false;
+                    document.getElementById('cardCountry').required = false;
+                    document.getElementById('cardPostal').required = false;
+                }
+            });
+        });
+
+        // Form Submit Handler
+        const checkoutForm = document.getElementById('checkoutForm');
+        const btnPay = document.getElementById('btnPay');
+        const paySpinner = document.getElementById('paySpinner');
+        const btnText = document.getElementById('btnText');
+        const errorBanner = document.getElementById('errorBanner');
+        const errorMessage = document.getElementById('errorMessage');
+
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Clear status
+            errorBanner.style.display = 'none';
+            btnPay.disabled = true;
+            paySpinner.style.display = 'block';
+            btnText.textContent = "Processing Checkout...";
+
+            // Retrieve form values
+            const customerName = document.getElementById('customerName').value;
+            const customerPhone = document.getElementById('customerPhone').value;
+
+            // Construct payload
+            const payload = {
+                amount: 500,
+                provider: selectedProvider,
+                method: selectedMethod,
+                customer_phone: customerPhone,
+                customer_name: customerName,
+                items: [
+                    {
+                        name: "Go Microservices & API Architecture Course",
+                        amount: "500",
+                        quantity: "1"
+                    }
+                ]
+            };
+
+            // Add billing address if paying with cards
+            const isCard = ["Visa", "Master", "JCB", "VisaMax", "MasterMax", "JCBMax", "MPU"].includes(selectedProvider);
+            if (isCard) {
+                payload.email = document.getElementById('cardEmail').value;
+                payload.bill_address = document.getElementById('cardAddress').value;
+                payload.bill_city = document.getElementById('cardCity').value;
+                payload.state = document.getElementById('cardState').value;
+                payload.country = document.getElementById('cardCountry').value;
+                payload.postal_code = document.getElementById('cardPostal').value;
+            }
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error?.message || "Failed to communicate with payment gateway.");
+                }
+
+                // Handle Response
+                handleGatewayResponse(result);
+
+            } catch (err) {
+                console.error("Payment error:", err);
+                showError(err.message || "An unexpected error occurred.");
+                resetPayButton();
+            }
+        });
+
+        // Handle payment gateway responses dynamically using backend-provided FlowType and RedirectURL.
+        function handleGatewayResponse(envelope) {
+            const result = envelope.data || envelope;
+            const dingerResponse = result.dinger_response;
+            const paymentId = result.id;
+            const flowType = result.flow_type;
+            const redirectUrl = result.redirect_url;
+
+            console.log('[CHECKOUT] Provider:', selectedProvider, '| Method:', selectedMethod);
+            console.log('[CHECKOUT] Flow Type:', flowType, '| Redirect URL:', redirectUrl);
+            console.log('[CHECKOUT] Dinger response:', JSON.stringify(dingerResponse, null, 2));
+
+            // 1. Flow type: redirect
+            if (flowType === 'redirect') {
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                } else if (dingerResponse?.paymentUrl) {
+                    window.location.href = dingerResponse.paymentUrl;
+                } else {
+                    showError("Redirect URL was not provided by the gateway.");
+                    resetPayButton();
+                }
+                return;
+            }
+
+            // 2. Flow type: qr
+            if (flowType === 'qr') {
+                const qrImage = document.getElementById('qrCodeImage');
+                let qrSrc = dingerResponse?.qrCode;
+
+                if (!qrSrc) {
+                    showError("QR code data was not returned by the gateway.");
+                    resetPayButton();
+                    return;
+                }
+
+                // Dinger QR codes can be raw EMVCo text payload strings or base64 image data
+                if (qrSrc.startsWith('000201') || !qrSrc.match(/^[a-zA-Z0-9+\/=]+$/)) {
+                    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrSrc)}`;
+                } else {
+                    if (!qrSrc.startsWith('data:image')) {
+                        qrSrc = `data:image/png;base64,${qrSrc}`;
+                    }
+                    qrImage.src = qrSrc;
+                }
+
+                document.getElementById('qrModalDesc').textContent =
+                    `Please open your ${selectedProvider} app and scan the QR code below to complete the payment.`;
+
+                openPaymentModal('qrModal', paymentId);
+                return;
+            }
+
+            // 3. Flow type: wallet_notification
+            if (flowType === 'wallet_notification') {
+                document.getElementById('waitingModalDesc').textContent =
+                    `A payment notification has been sent to your ${selectedProvider} wallet. Please open the app and approve the payment of 500 MMK.`;
+
+                openPaymentModal('waitingModal', paymentId);
+                return;
+            }
+
+            // Fallback: Check status for mock mode or already resolved states
+            if (result.status === 'succeeded') {
+                window.location.href = `/success?payment_id=${paymentId}&status=succeeded`;
+            } else if (result.status === 'failed') {
+                window.location.href = `/fail?payment_id=${paymentId}&status=failed`;
+            } else {
+                showError(`Unhandled flow type: "${flowType}" or status: "${result.status}"`);
+                resetPayButton();
+            }
+        }
+
+        // Open modals and set up polling/timers
+        function openPaymentModal(modalId, paymentId) {
+            currentPaymentId = paymentId;
+
+            // Reset modal styles & states
+            if (modalId === 'qrModal') {
+                document.getElementById('qrCodeImage').style.filter = '';
+                document.getElementById('qrExpiredOverlay').style.display = 'none';
+                document.getElementById('qrPollingIndicator').style.display = 'flex';
+                document.getElementById('qrTimerDisplay').style.display = 'flex';
+                document.getElementById('qrRetryBtn').style.display = 'none';
+                document.getElementById('qrModal').style.display = 'flex';
+            } else if (modalId === 'waitingModal') {
+                const bellIcon = document.getElementById('waitingBellIcon');
+                bellIcon.className = 'fa-solid fa-bell';
+                bellIcon.style.color = 'var(--accent-color)';
+                bellIcon.style.animation = 'pulse-dot 2s infinite';
+                document.getElementById('waitingPollingIndicator').style.display = 'flex';
+                document.getElementById('waitingTimerDisplay').style.display = 'flex';
+                document.getElementById('waitingRetryBtn').style.display = 'none';
+                document.getElementById('waitingModal').style.display = 'flex';
+            }
+
+            // Start polling backend status
+            startPaymentPolling(paymentId);
+
+            // Start countdown timer
+            startTimer(SESSION_TIMEOUT_SEC, () => {
+                handlePaymentExpiration();
+            });
+        }
+
+        // Handle modal session expiration
+        function handlePaymentExpiration() {
+            // Stop polling
+            clearAllTimers();
+
+            console.warn('[CHECKOUT] Payment session expired for ID:', currentPaymentId);
+
+            // Update QR Modal UI
+            const qrImage = document.getElementById('qrCodeImage');
+            if (qrImage) {
+                qrImage.style.filter = 'blur(6px) grayscale(80%)';
+            }
+            const qrOverlay = document.getElementById('qrExpiredOverlay');
+            if (qrOverlay) {
+                qrOverlay.style.display = 'flex';
+            }
+            const qrPolling = document.getElementById('qrPollingIndicator');
+            if (qrPolling) {
+                qrPolling.style.display = 'none';
+            }
+            const qrTimerDisp = document.getElementById('qrTimerDisplay');
+            if (qrTimerDisp) {
+                qrTimerDisp.style.display = 'none';
+            }
+            const qrRetry = document.getElementById('qrRetryBtn');
+            if (qrRetry) {
+                qrRetry.style.display = 'block';
+            }
+
+            // Update Waiting Modal UI
+            const bellIcon = document.getElementById('waitingBellIcon');
+            if (bellIcon) {
+                bellIcon.className = 'fa-solid fa-clock';
+                bellIcon.style.color = 'var(--error-color)';
+                bellIcon.style.animation = 'none';
+            }
+            const waitingPolling = document.getElementById('waitingPollingIndicator');
+            if (waitingPolling) {
+                waitingPolling.style.display = 'none';
+            }
+            const waitingTimerDisp = document.getElementById('waitingTimerDisplay');
+            if (waitingTimerDisp) {
+                waitingTimerDisp.style.display = 'none';
+            }
+            const waitingRetry = document.getElementById('waitingRetryBtn');
+            if (waitingRetry) {
+                waitingRetry.style.display = 'block';
+            }
+        }
+
+        // Start countdown timer
+        function startTimer(durationSeconds, onExpire) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            let timeRemaining = durationSeconds;
+
+            updateTimerDisplay(timeRemaining);
+
+            countdownInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay(timeRemaining);
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    onExpire();
+                }
+            }, 1000);
+        }
+
+        // Update MM:SS timer texts
+        function updateTimerDisplay(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            const qrTimer = document.getElementById('qrTimer');
+            if (qrTimer) qrTimer.textContent = formatted;
+
+            const waitingTimer = document.getElementById('waitingTimer');
+            if (waitingTimer) waitingTimer.textContent = formatted;
+        }
+
+        // Poll Payment Status API
+        let pollCount = 0;
+        function startPaymentPolling(paymentId) {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollCount = 0;
+
+            // Hide previous tips
+            const qrTip = document.getElementById('qrLocalDevTip');
+            if (qrTip) qrTip.style.display = 'none';
+            const waitTip = document.getElementById('waitingLocalDevTip');
+            if (waitTip) waitTip.style.display = 'none';
+
+            pollingInterval = setInterval(async () => {
+                pollCount++;
+                if (pollCount >= 5) { // 15 seconds (5 * 3s)
+                    const qrTip = document.getElementById('qrLocalDevTip');
+                    if (qrTip) qrTip.style.display = 'block';
+                    const waitTip = document.getElementById('waitingLocalDevTip');
+                    if (waitTip) waitTip.style.display = 'block';
+                }
+
+                try {
+                    const response = await fetch(`/api/payment/${paymentId}`);
+                    if (!response.ok) return;
+
+                    const envelope = await response.json();
+                    const data = envelope.data || envelope;
+
+                    if (data.status === "succeeded") {
+                        clearAllTimers();
+                        window.location.href = `/success?payment_id=${paymentId}&status=succeeded`;
+                    } else if (data.status === "failed") {
+                        clearAllTimers();
+                        window.location.href = `/fail?payment_id=${paymentId}&status=failed`;
+                    }
+                } catch (err) {
+                    console.error("Polling error:", err);
+                }
+            }, 3000); // Poll every 3 seconds
+        }
+
+        // Programmatically retry checkout with same details
+        function retryCheckout() {
+            // Close active modals
+            document.getElementById('qrModal').style.display = 'none';
+            document.getElementById('waitingModal').style.display = 'none';
+            clearAllTimers();
+
+            // Programmatically dispatch submit event to trigger new order creation
+            checkoutForm.dispatchEvent(new Event('submit'));
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrModal').style.display = 'none';
+            const qrTip = document.getElementById('qrLocalDevTip');
+            if (qrTip) qrTip.style.display = 'none';
+            clearAllTimers();
+            resetPayButton();
+        }
+
+        function closeWaitingModal() {
+            document.getElementById('waitingModal').style.display = 'none';
+            const waitTip = document.getElementById('waitingLocalDevTip');
+            if (waitTip) waitTip.style.display = 'none';
+            clearAllTimers();
+            resetPayButton();
+        }
+
+        function clearAllTimers() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+        }
+
+        function resetPayButton() {
+            btnPay.disabled = false;
+            paySpinner.style.display = 'none';
+            btnText.textContent = "Enroll and Pay 500 MMK";
+        }
+
+        function showError(msg) {
+            errorBanner.style.display = 'flex';
+            errorMessage.textContent = msg;
+        }
+    </script>
+</body>
+
+</html>

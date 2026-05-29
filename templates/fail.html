@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.45);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --error-color: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.15);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #ef4444, #7f1d1d);
+        }
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #6366f1, #312e81);
+        }
+
+        .fail-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(28px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .fail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, rgba(239, 68, 68, 0.3), transparent);
+        }
+
+        .icon-container {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: var(--error-glow);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        .icon {
+            font-size: 42px;
+            color: var(--error-color);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0 0 36px 0;
+        }
+
+        /* Invoice Table */
+        .invoice-table {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 36px;
+            text-align: left;
+        }
+        .invoice-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 14px;
+        }
+        .invoice-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .invoice-row:first-child {
+            padding-top: 0;
+        }
+        .invoice-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .invoice-value {
+            color: #ffffff;
+            font-weight: 600;
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+            opacity: 0.95;
+        }
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .btn-secondary:hover {
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 14px;
+            display: inline-block;
+            width: 120px;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <div class="fail-card">
+        <div class="icon-container">
+            <i class="fa-solid fa-circle-xmark icon"></i>
+        </div>
+        <h1>Payment Failed</h1>
+        <p class="subtitle">Unfortunately, your transaction could not be processed. This might be due to insufficient funds, an expired checkout session, or network connectivity issues.</p>
+
+        <!-- Invoice Details -->
+        <div class="invoice-table">
+            <div class="invoice-row">
+                <span class="invoice-label">Enrollment ID</span>
+                <span class="invoice-value" id="valPaymentId"><div class="skeleton" style="width: 180px;"></div></span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">Amount Attempted</span>
+                <span class="invoice-value" id="valAmount"><div class="skeleton" style="width: 80px;"></div></span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">Payment Method</span>
+                <span class="invoice-value" id="valMethod"><div class="skeleton" style="width: 100px;"></div></span>
+            </div>
+            <div class="invoice-row">
+                <span class="invoice-label">Reason</span>
+                <span class="invoice-value" style="color: var(--error-color);" id="valReason">Transaction Declined</span>
+            </div>
+        </div>
+
+        <a href="/payment" class="btn-action">Try Payment Again</a>
+        <a href="/payment" class="btn-secondary">Return to Checkout</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const paymentId = params.get('payment_id');
+            
+            if (!paymentId) {
+                document.getElementById('valPaymentId').textContent = "N/A";
+                document.getElementById('valAmount').textContent = "50,000 MMK";
+                document.getElementById('valMethod').textContent = "Direct Redirect";
+                return;
+            }
+
+            document.getElementById('valPaymentId').textContent = paymentId;
+
+            try {
+                // Fetch dynamic info from proxy API
+                const response = await fetch(`/api/payment/${paymentId}`);
+                if (!response.ok) throw new Error("Failed to load details");
+
+                const envelope = await response.json();
+                const payment = envelope.data || envelope;
+                
+                // Populate elements
+                document.getElementById('valAmount').textContent = `${payment.amount.toLocaleString()} ${payment.currency}`;
+                document.getElementById('valMethod').textContent = `${payment.provider} (${payment.method})`;
+
+            } catch (err) {
+                console.error("Error loading payment info:", err);
+                document.getElementById('valAmount').textContent = "50,000 MMK";
+                document.getElementById('valMethod').textContent = "E-Wallet";
+            }
+        });
+    </script>
+</body>
+</html>

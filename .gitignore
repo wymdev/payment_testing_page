@@ -1,0 +1,16 @@
+# Environment files
+.env
+
+# Go compiled binaries and object files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+main
+virgolearn-testing-paypage
+bin/
+dist/
+tmp/

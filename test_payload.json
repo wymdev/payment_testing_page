@@ -1,0 +1,8 @@
+{
+  "amount": 500,
+  "provider": "CB Pay",
+  "method": "QR",
+  "customer_name": "Test User",
+  "customer_phone": "09123456789",
+  "items": [{"name": "Course", "amount": "500", "quantity": "1"}]
+}
